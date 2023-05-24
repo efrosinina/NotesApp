@@ -14,6 +14,7 @@ final class SimpleNoteTableViewCell: UITableViewCell {
         let view = UIView()
         view.backgroundColor = .lightYellow
         view.layer.cornerRadius = 10
+        
         return view
     }()
     

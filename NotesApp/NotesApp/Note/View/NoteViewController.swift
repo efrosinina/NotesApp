@@ -13,7 +13,6 @@ final class NoteViewController: UIViewController {
     private let attachmentView: UIImageView = {
         let view = UIImageView()
         view.layer.cornerRadius = 10
-        view.image = UIImage(named: "mockImage")
         view.layer.masksToBounds = true
         view.contentMode = .scaleAspectFill
         
@@ -28,41 +27,46 @@ final class NoteViewController: UIViewController {
         return view
     }()
     
+    //MARK: -- Properties
+    var viewModel: NoteViewModelProtocol?
+    
     //MARK: -- Life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        textView.delegate = self
+        configure()
         setupUI()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
         navigationController?.navigationBar.prefersLargeTitles = false
     }
     
-    //MARK: -- Methods
-    func set(note: Note) {
-        textView.text = note.title + " " + note.description
-        guard let imageData = note.image,
-              let image = UIImage(data: imageData) else { return }
-        attachmentView.image = image
+    //MARK: -- Private Methods
+    private func configure() {
+        textView.text = viewModel?.text
+        //  guard let imageData = note.image,
+        //         let image = UIImage(data: imageData) else { return }
+        //   attachmentView.image = image
     }
     
-    //MARK: -- Private Methods
     @objc
     private func saveAction() {
-        
+        viewModel?.save(with: textView.text)
+        navigationController?.popViewController(animated: true)
     }
     
     @objc
-    private func trashAction() {
-        
+    private func deleteAction() {
+        viewModel?.delete()
+        navigationController?.popViewController(animated: true)
     }
     
     @objc
     private func addImageButton() {
-        
+        //Add realization
     }
     
     private func setupUI() {
@@ -72,7 +76,6 @@ final class NoteViewController: UIViewController {
         let recognizer = UITapGestureRecognizer(target: self,
                                                 action: #selector(hideKeyboard))
         view.addGestureRecognizer(recognizer)
-        
         textView.layer.borderWidth = textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 1 : 0
         
         setupConstraints()
@@ -82,11 +85,11 @@ final class NoteViewController: UIViewController {
     
     private func setImageHeight() {
         let height = attachmentView.image != nil ? 200 : 0
-        
         attachmentView.snp.makeConstraints { make in
             make.height.equalTo(height)
         }
     }
+    
     private func setupConstraints() {
         attachmentView.snp.makeConstraints { make in
             make.top.leading.trailing.equalTo(view.safeAreaLayoutGuide).inset(10)
@@ -98,21 +101,30 @@ final class NoteViewController: UIViewController {
             make.bottom.equalTo(view.keyboardLayoutGuide.snp.top).inset(-10)
         }
     }
+    
     @objc
     private func hideKeyboard() {
         textView.resignFirstResponder()
     }
     
     private func setupBars() {
-        let trashButton = UIBarButtonItem(barButtonSystemItem: .trash,
-                                          target: self, action: #selector(trashAction))
         let addImage = UIBarButtonItem(barButtonSystemItem: .camera,
                                        target: self, action: #selector(addImageButton))
         let spacing = UIBarButtonItem(systemItem: .flexibleSpace)
-        setToolbarItems([trashButton, spacing, addImage], animated: true)
-        
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save,
-                                                            target: self, action: #selector(saveAction))
-        
+        setToolbarItems([spacing, addImage], animated: true)
+    }
+}
+
+//MARK: -- UITextViewDelegate
+extension NoteViewController: UITextViewDelegate {
+    func textViewDidChange(_ textView: UITextView) {
+        if !textView.text.isEmpty && !textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save,
+                                                                target: self, action: #selector(saveAction))
+            let trashButton = UIBarButtonItem(barButtonSystemItem: .trash,
+                                              target: self, action: #selector(deleteAction))
+            let spacing = UIBarButtonItem(systemItem: .flexibleSpace)
+            setToolbarItems([trashButton, spacing], animated: true)
+        }
     }
 }

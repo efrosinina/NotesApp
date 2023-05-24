@@ -13,6 +13,7 @@ final class ImageNoteTableViewCell: UITableViewCell {
         let view = UIView()
         view.backgroundColor = .lightGreen
         view.layer.cornerRadius = 10
+        
         return view
     }()
     
