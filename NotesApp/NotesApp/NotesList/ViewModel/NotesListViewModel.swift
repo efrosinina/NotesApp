@@ -11,13 +11,13 @@ protocol NotesListViewModelProtocol {
     var section: [TableViewSection] { get }
     var reloadTable: (() -> Void)? { get set}
     
+    func getImage(for url: URL) -> UIImage?
     func getNotes()
 }
 
 final class NotesListViewModel: NotesListViewModelProtocol {
     //MARK: -- Properties
     var reloadTable: (() -> Void)?
-    
     private(set) var section: [TableViewSection] = [] {
         didSet {
             reloadTable?()
@@ -44,9 +44,15 @@ final class NotesListViewModel: NotesListViewModelProtocol {
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "d  MMM yyyy"
             let stringDate = dateFormatter.string(from: key)
-            section.append(TableViewSection(title: stringDate, items: groupedObjects[key] ?? []))
+            section.append(TableViewSection(title: stringDate,
+                                            items: groupedObjects[key] ?? []))
         }
     }
+    
+    func getImage(for url: URL) -> UIImage? {
+        FileManagerPersistant.read(from: url)
+    }
+    
     //MARK: -- Private Methods
     private func setMocks() {
         let section = TableViewSection(title: "23.04.2023" ,items: [

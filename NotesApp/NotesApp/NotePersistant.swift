@@ -51,7 +51,10 @@ final class NotePersistant {
     //MARK: -- Private Methods
     private static func convert(entities: [NoteEntity]) -> [Note] {
         let notes = entities.map {
-            Note(title: $0.title ?? "", description: $0.text, date: $0.date ?? Date(), imageURL: $0.imageURL)
+            Note(title: $0.title ?? "",
+                 description: $0.text,
+                 date: $0.date ?? Date(),
+                 imageURL: $0.imageURL)
         }
         return notes
     }

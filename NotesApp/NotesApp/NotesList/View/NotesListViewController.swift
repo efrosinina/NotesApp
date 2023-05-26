@@ -83,11 +83,12 @@ extension NotesListViewController {
         guard let note = viewModel?.section[indexPath.section].items[indexPath.row] as? Note
         else { return UITableViewCell() }
         
-        if indexPath.row == 0,
-           let cell = tableView.dequeueReusableCell(withIdentifier: "SimpleNoteTableViewCell", for: indexPath) as? SimpleNoteTableViewCell {
-            cell.set(note: note)
+        if let imageURL = note.imageURL,
+           let cell = tableView.dequeueReusableCell(withIdentifier: "ImageNoteTableViewCell", for: indexPath) as? ImageNoteTableViewCell,
+           let image = viewModel?.getImage(for: imageURL) {
+            cell.set(note: note, image: image)
             return cell
-        } else if let cell = tableView.dequeueReusableCell(withIdentifier: "ImageNoteTableViewCell", for: indexPath) as? ImageNoteTableViewCell {
+        } else if let cell = tableView.dequeueReusableCell(withIdentifier: "SimpleNoteTableViewCell", for: indexPath) as? SimpleNoteTableViewCell {
             cell.set(note: note)
             return cell
         }

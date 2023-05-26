@@ -12,5 +12,4 @@ protocol TableViewItemsProtocol { }
 struct TableViewSection {
     var title: String?
     var items: [TableViewItemsProtocol]
-    
 }

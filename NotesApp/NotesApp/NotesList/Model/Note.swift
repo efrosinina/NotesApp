@@ -12,5 +12,4 @@ struct Note: TableViewItemsProtocol {
     let description: String?
     let date: Date
     let imageURL: URL?
-    let image: Data? = nil
 }
