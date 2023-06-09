@@ -35,8 +35,7 @@ final class NoteViewController: UIViewController {
     //MARK: -- Life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        textView.delegate = self
+
         configure()
         setupUI()
     }
@@ -85,7 +84,7 @@ final class NoteViewController: UIViewController {
         textView.layer.borderWidth = textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 1 : 0
         
         setupConstraints()
-        setupImageBar()
+        setupBars()
     }
     
     private func setupConstraints() {
@@ -113,30 +112,15 @@ final class NoteViewController: UIViewController {
         textView.resignFirstResponder()
     }
     
-    private func setupImageBar() {
-        let addImage = UIBarButtonItem(barButtonSystemItem: .camera,
-                                       target: self, action: #selector(addImageButton))
-        let spacing = UIBarButtonItem(systemItem: .flexibleSpace)
-        setToolbarItems([spacing, addImage], animated: true)
-    }
-    
     private func setupBars() {
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save,
                                                             target: self, action: #selector(saveAction))
         let trashButton = UIBarButtonItem(barButtonSystemItem: .trash,
                                           target: self, action: #selector(deleteAction))
+        let addImage = UIBarButtonItem(barButtonSystemItem: .camera,
+                                       target: self, action: #selector(addImageButton))
         let spacing = UIBarButtonItem(systemItem: .flexibleSpace)
-        setToolbarItems([trashButton, spacing], animated: true)
-    }
-}
-
-//MARK: -- UITextViewDelegate
-extension NoteViewController: UITextViewDelegate {
-    func textViewDidChange(_ textView: UITextView) {
-        if !textView.text.isEmpty &&
-            !textView.text.trimmingCharacters(in: .whitespaces).isEmpty {
-            setupBars()
-        }
+        setToolbarItems([trashButton, spacing, addImage], animated: true)
     }
 }
 
@@ -149,7 +133,6 @@ extension NoteViewController: UIImagePickerControllerDelegate, UINavigationContr
         imageName = url.lastPathComponent
         attachmentView.image = selectedImage
         updateImageHeight()
-        setupBars()
         dismiss(animated: true)
     }
     

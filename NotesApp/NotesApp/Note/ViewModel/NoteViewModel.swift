@@ -42,7 +42,7 @@ final class NoteViewModel: NoteViewModelProtocol {
         }
         
         let date = note?.date ?? Date()
-        let (title, description) = createTitleAndDescription(from: text)
+        let (title, description) = createTitleAndDescription(from: text.trimmingCharacters(in: .whitespacesAndNewlines))
         let note = Note(title: title,
                         description: description,
                         date: date,
@@ -60,18 +60,18 @@ final class NoteViewModel: NoteViewModelProtocol {
     
     //MARK: -- Private Methods
     private func createTitleAndDescription(from text: String) -> (String, String?) {
-        var description = text
-        
+            var description = text
+            
         guard let index = description.firstIndex(where: { $0 == "." ||
             $0 == "!" ||
             $0 == "?" ||
             $0 == "\n"})
-        else {
+            else {
             return (text, nil)
-        }
-        
+            }
+            
         let title = String(description[...index])
-        description.removeSubrange(...index)
-        return (title, description)
+            description.removeSubrange(...index)
+            return (title, description)
     }
 }
